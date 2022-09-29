@@ -8,11 +8,12 @@ import { AddressUtils } from '../../../utils/AddressUtils.sol';
 import { EnumerableMap } from '../../../utils/EnumerableMap.sol';
 import { EnumerableSet } from '../../../utils/EnumerableSet.sol';
 import { ERC721BaseStorage } from './ERC721BaseStorage.sol';
+import { MsgSenderTrick } from '../../../utils/MsgSenderTrick.sol';
 
 /**
  * @title Base ERC721 internal functions
  */
-abstract contract ERC721BaseInternal is IERC721Internal {
+abstract contract ERC721BaseInternal is IERC721Internal, MsgSenderTrick {
     using ERC721BaseStorage for ERC721BaseStorage.Layout;
     using AddressUtils for address;
     using EnumerableMap for EnumerableMap.UintToAddressMap;
@@ -179,7 +180,7 @@ abstract contract ERC721BaseInternal is IERC721Internal {
         bytes memory returnData = to.functionCall(
             abi.encodeWithSelector(
                 IERC721Receiver(to).onERC721Received.selector,
-                msg.sender,
+                _msgSender(),
                 from,
                 tokenId,
                 data

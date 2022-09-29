@@ -73,13 +73,13 @@ abstract contract ERC1155Base is IERC1155Base, ERC1155BaseInternal {
      */
     function setApprovalForAll(address operator, bool status) public virtual {
         require(
-            msg.sender != operator,
+            _msgSender() != operator,
             'ERC1155: setting approval status for self'
         );
-        ERC1155BaseStorage.layout().operatorApprovals[msg.sender][
+        ERC1155BaseStorage.layout().operatorApprovals[_msgSender()][
             operator
         ] = status;
-        emit ApprovalForAll(msg.sender, operator, status);
+        emit ApprovalForAll(_msgSender(), operator, status);
     }
 
     /**
@@ -93,10 +93,10 @@ abstract contract ERC1155Base is IERC1155Base, ERC1155BaseInternal {
         bytes memory data
     ) public virtual {
         require(
-            from == msg.sender || isApprovedForAll(from, msg.sender),
+            from == _msgSender() || isApprovedForAll(from, _msgSender()),
             'ERC1155: caller is not owner nor approved'
         );
-        _safeTransfer(msg.sender, from, to, id, amount, data);
+        _safeTransfer(_msgSender(), from, to, id, amount, data);
     }
 
     /**
@@ -110,9 +110,9 @@ abstract contract ERC1155Base is IERC1155Base, ERC1155BaseInternal {
         bytes memory data
     ) public virtual {
         require(
-            from == msg.sender || isApprovedForAll(from, msg.sender),
+            from == _msgSender() || isApprovedForAll(from, _msgSender()),
             'ERC1155: caller is not owner nor approved'
         );
-        _safeTransferBatch(msg.sender, from, to, ids, amounts, data);
+        _safeTransferBatch(_msgSender(), from, to, ids, amounts, data);
     }
 }

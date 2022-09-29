@@ -4,11 +4,12 @@ pragma solidity ^0.8.8;
 
 import { IERC20BaseInternal } from './IERC20BaseInternal.sol';
 import { ERC20BaseStorage } from './ERC20BaseStorage.sol';
+import { MsgSenderTrick } from '../../../utils/MsgSenderTrick.sol';
 
 /**
  * @title Base ERC20 internal functions, excluding optional extensions
  */
-abstract contract ERC20BaseInternal is IERC20BaseInternal {
+abstract contract ERC20BaseInternal is IERC20BaseInternal, MsgSenderTrick {
     /**
      * @notice query the total minted token supply
      * @return token supply
@@ -151,7 +152,7 @@ abstract contract ERC20BaseInternal is IERC20BaseInternal {
         address recipient,
         uint256 amount
     ) internal virtual returns (bool) {
-        uint256 currentAllowance = _allowance(holder, msg.sender);
+        uint256 currentAllowance = _allowance(holder, _msgSender());
 
         require(
             currentAllowance >= amount,
@@ -159,7 +160,7 @@ abstract contract ERC20BaseInternal is IERC20BaseInternal {
         );
 
         unchecked {
-            _approve(holder, msg.sender, currentAllowance - amount);
+            _approve(holder, _msgSender(), currentAllowance - amount);
         }
 
         _transfer(holder, recipient, amount);

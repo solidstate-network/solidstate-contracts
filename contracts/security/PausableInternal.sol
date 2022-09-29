@@ -3,11 +3,12 @@
 pragma solidity ^0.8.8;
 
 import { PausableStorage } from './PausableStorage.sol';
+import { MsgSenderTrick } from '../utils/MsgSenderTrick.sol';
 
 /**
  * @title Internal functions for Pausable security control module.
  */
-abstract contract PausableInternal {
+abstract contract PausableInternal is MsgSenderTrick {
     using PausableStorage for PausableStorage.Layout;
 
     event Paused(address account);
@@ -37,7 +38,7 @@ abstract contract PausableInternal {
      */
     function _pause() internal virtual whenNotPaused {
         PausableStorage.layout().paused = true;
-        emit Paused(msg.sender);
+        emit Paused(_msgSender());
     }
 
     /**
@@ -45,6 +46,6 @@ abstract contract PausableInternal {
      */
     function _unpause() internal virtual whenPaused {
         PausableStorage.layout().paused = false;
-        emit Unpaused(msg.sender);
+        emit Unpaused(_msgSender());
     }
 }

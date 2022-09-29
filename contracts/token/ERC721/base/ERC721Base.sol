@@ -61,7 +61,7 @@ abstract contract ERC721Base is IERC721Base, ERC721BaseInternal {
     ) public payable {
         _handleTransferMessageValue(from, to, tokenId, msg.value);
         require(
-            _isApprovedOrOwner(msg.sender, tokenId),
+            _isApprovedOrOwner(_msgSender(), tokenId),
             'ERC721: transfer caller is not owner or approved'
         );
         _transfer(from, to, tokenId);
@@ -89,7 +89,7 @@ abstract contract ERC721Base is IERC721Base, ERC721BaseInternal {
     ) public payable {
         _handleTransferMessageValue(from, to, tokenId, msg.value);
         require(
-            _isApprovedOrOwner(msg.sender, tokenId),
+            _isApprovedOrOwner(_msgSender(), tokenId),
             'ERC721: transfer caller is not owner or approved'
         );
         _safeTransfer(from, to, tokenId, data);
@@ -103,7 +103,7 @@ abstract contract ERC721Base is IERC721Base, ERC721BaseInternal {
         address owner = ownerOf(tokenId);
         require(operator != owner, 'ERC721: approval to current owner');
         require(
-            msg.sender == owner || isApprovedForAll(owner, msg.sender),
+            _msgSender() == owner || isApprovedForAll(owner, _msgSender()),
             'ERC721: approve caller is not owner nor approved for all'
         );
         _approve(operator, tokenId);
@@ -113,10 +113,10 @@ abstract contract ERC721Base is IERC721Base, ERC721BaseInternal {
      * @inheritdoc IERC721
      */
     function setApprovalForAll(address operator, bool status) public {
-        require(operator != msg.sender, 'ERC721: approve to caller');
-        ERC721BaseStorage.layout().operatorApprovals[msg.sender][
+        require(operator != _msgSender(), 'ERC721: approve to caller');
+        ERC721BaseStorage.layout().operatorApprovals[_msgSender()][
             operator
         ] = status;
-        emit ApprovalForAll(msg.sender, operator, status);
+        emit ApprovalForAll(_msgSender(), operator, status);
     }
 }

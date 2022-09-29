@@ -45,7 +45,7 @@ abstract contract ERC20Base is IERC20Base, ERC20BaseInternal {
         virtual
         returns (bool)
     {
-        return _approve(msg.sender, spender, amount);
+        return _approve(_msgSender(), spender, amount);
     }
 
     /**
@@ -56,7 +56,7 @@ abstract contract ERC20Base is IERC20Base, ERC20BaseInternal {
         virtual
         returns (bool)
     {
-        return _transfer(msg.sender, recipient, amount);
+        return _transfer(_msgSender(), recipient, amount);
     }
 
     /**
