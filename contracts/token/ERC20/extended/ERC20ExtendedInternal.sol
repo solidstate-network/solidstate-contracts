@@ -10,8 +10,8 @@ import { IERC20ExtendedInternal } from './IERC20ExtendedInternal.sol';
  * @dev mitigations for transaction-ordering vulnerability (see https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729)
  */
 abstract contract ERC20ExtendedInternal is
-    ERC20BaseInternal,
-    IERC20ExtendedInternal
+    IERC20ExtendedInternal,
+    ERC20BaseInternal
 {
     /**
      * @notice increase spend amount granted to spender

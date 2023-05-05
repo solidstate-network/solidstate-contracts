@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.8;
 
-import { ERC20Base } from '../base/ERC20Base.sol';
-import { ERC20Metadata } from '../metadata/ERC20Metadata.sol';
+import { IERC2612 } from '../../../interfaces/IERC2612.sol';
 import { ERC20PermitInternal } from './ERC20PermitInternal.sol';
 import { ERC20PermitStorage } from './ERC20PermitStorage.sol';
-import { IERC2612 } from './IERC2612.sol';
 import { IERC20Permit } from './IERC20Permit.sol';
 
 /**

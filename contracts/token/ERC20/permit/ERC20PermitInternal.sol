@@ -12,9 +12,9 @@ import { IERC20PermitInternal } from './IERC20PermitInternal.sol';
  * @dev derived from https://github.com/soliditylabs/ERC20-Permit (MIT license)
  */
 abstract contract ERC20PermitInternal is
+    IERC20PermitInternal,
     ERC20BaseInternal,
-    ERC20MetadataInternal,
-    IERC20PermitInternal
+    ERC20MetadataInternal
 {
     using ECDSA for bytes32;
 
