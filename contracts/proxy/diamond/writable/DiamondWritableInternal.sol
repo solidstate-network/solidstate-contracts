@@ -42,7 +42,7 @@ abstract contract DiamondWritableInternal is IDiamondWritableInternal {
                 FacetCut memory facetCut = facetCuts[i];
                 FacetCutAction action = facetCut.action;
 
-                if (facetCut.selectors.length == 0)
+                if (facetCut.functionSelectors.length == 0)
                     revert DiamondWritable__SelectorNotSpecified();
 
                 if (action == FacetCutAction.ADD) {
@@ -86,12 +86,12 @@ abstract contract DiamondWritableInternal is IDiamondWritableInternal {
     ) internal returns (uint256, bytes32) {
         unchecked {
             if (
-                facetCut.target != address(this) &&
-                !facetCut.target.isContract()
+                facetCut.facetAddress != address(this) &&
+                !facetCut.facetAddress.isContract()
             ) revert DiamondWritable__TargetHasNoCode();
 
-            for (uint256 i; i < facetCut.selectors.length; i++) {
-                bytes4 selector = facetCut.selectors[i];
+            for (uint256 i; i < facetCut.functionSelectors.length; i++) {
+                bytes4 selector = facetCut.functionSelectors[i];
                 bytes32 oldFacet = l.facets[selector];
 
                 if (address(bytes20(oldFacet)) != address(0))
@@ -99,7 +99,7 @@ abstract contract DiamondWritableInternal is IDiamondWritableInternal {
 
                 // add facet for selector
                 l.facets[selector] =
-                    bytes20(facetCut.target) |
+                    bytes20(facetCut.facetAddress) |
                     bytes32(selectorCount);
                 uint256 selectorInSlotPosition = (selectorCount & 7) << 5;
 
@@ -129,14 +129,14 @@ abstract contract DiamondWritableInternal is IDiamondWritableInternal {
         FacetCut memory facetCut
     ) internal returns (uint256, bytes32) {
         unchecked {
-            if (facetCut.target != address(0))
+            if (facetCut.facetAddress != address(0))
                 revert DiamondWritable__RemoveTargetNotZeroAddress();
 
             uint256 selectorSlotCount = selectorCount >> 3;
             uint256 selectorInSlotIndex = selectorCount & 7;
 
-            for (uint256 i; i < facetCut.selectors.length; i++) {
-                bytes4 selector = facetCut.selectors[i];
+            for (uint256 i; i < facetCut.functionSelectors.length; i++) {
+                bytes4 selector = facetCut.functionSelectors[i];
                 bytes32 oldFacet = l.facets[selector];
 
                 if (address(bytes20(oldFacet)) == address(0))
@@ -217,11 +217,11 @@ abstract contract DiamondWritableInternal is IDiamondWritableInternal {
         FacetCut memory facetCut
     ) internal {
         unchecked {
-            if (!facetCut.target.isContract())
+            if (!facetCut.facetAddress.isContract())
                 revert DiamondWritable__TargetHasNoCode();
 
-            for (uint256 i; i < facetCut.selectors.length; i++) {
-                bytes4 selector = facetCut.selectors[i];
+            for (uint256 i; i < facetCut.functionSelectors.length; i++) {
+                bytes4 selector = facetCut.functionSelectors[i];
                 bytes32 oldFacet = l.facets[selector];
                 address oldFacetAddress = address(bytes20(oldFacet));
 
@@ -229,13 +229,13 @@ abstract contract DiamondWritableInternal is IDiamondWritableInternal {
                     revert DiamondWritable__SelectorNotFound();
                 if (oldFacetAddress == address(this))
                     revert DiamondWritable__SelectorIsImmutable();
-                if (oldFacetAddress == facetCut.target)
+                if (oldFacetAddress == facetCut.facetAddress)
                     revert DiamondWritable__ReplaceTargetIsIdentical();
 
                 // replace old facet address
                 l.facets[selector] =
                     (oldFacet & CLEAR_ADDRESS_MASK) |
-                    bytes20(facetCut.target);
+                    bytes20(facetCut.facetAddress);
             }
         }
     }

@@ -17,9 +17,9 @@ describe('DiamondBase', function () {
 
     instance = await new DiamondBaseMock__factory(deployer).deploy([
       {
-        target: facetInstance.address,
+        facetAddress: facetInstance.address,
         action: 0,
-        selectors: [facetInstance.interface.getSighash('owner()')],
+        functionSelectors: [facetInstance.interface.getSighash('owner()')],
       },
     ]);
   });

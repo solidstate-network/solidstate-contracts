@@ -21,8 +21,8 @@ interface IDiamondWritableInternal {
     error DiamondWritable__TargetHasNoCode();
 
     struct FacetCut {
-        address target;
+        address facetAddress;
         FacetCutAction action;
-        bytes4[] selectors;
+        bytes4[] functionSelectors;
     }
 }

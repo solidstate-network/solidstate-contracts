@@ -3,6 +3,7 @@ import { describeBehaviorOfSolidStateDiamond } from '@solidstate/spec';
 import {
   SolidStateDiamond,
   SolidStateDiamondMock__factory,
+  IDiamondWritableInternal,
 } from '@solidstate/typechain-types';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
@@ -14,7 +15,7 @@ describe('SolidStateDiamond', function () {
 
   let instance: SolidStateDiamond;
 
-  let facetCuts: any[] = [];
+  let facetCuts: IDiamondWritableInternal.FacetCutStruct[] = [];
 
   before(async function () {
     [owner, nomineeOwner, nonOwner] = await ethers.getSigners();
@@ -29,9 +30,9 @@ describe('SolidStateDiamond', function () {
     expect(facets).to.have.lengthOf(1);
 
     facetCuts[0] = {
-      target: instance.address,
+      facetAddress: instance.address,
       action: 0,
-      selectors: facets[0].selectors,
+      functionSelectors: facets[0].selectors,
     };
   });
 

@@ -23,7 +23,7 @@ export function describeBehaviorOfDiamondWritable(
     let nonOwner: SignerWithAddress;
 
     const functions: string[] = [];
-    const selectors: string[] = [];
+    const functionSelectors: string[] = [];
     let abi: any;
     let facet: any;
 
@@ -36,7 +36,7 @@ export function describeBehaviorOfDiamondWritable(
       for (let i = 0; i < 24; i++) {
         const fn = `fn${i}()`;
         functions.push(fn);
-        selectors.push(
+        functionSelectors.push(
           ethers.utils.hexDataSlice(
             ethers.utils.solidityKeccak256(['string'], [fn]),
             0,
@@ -67,9 +67,11 @@ export function describeBehaviorOfDiamondWritable(
       it('emits DiamondCut event', async function () {
         const facets: any = [
           {
-            target: facet.address,
+            facetAddress: facet.address,
             action: 0,
-            selectors: [ethers.utils.hexlify(ethers.utils.randomBytes(4))],
+            functionSelectors: [
+              ethers.utils.hexlify(ethers.utils.randomBytes(4)),
+            ],
           },
         ];
         const target = ethers.constants.AddressZero;
@@ -110,7 +112,7 @@ export function describeBehaviorOfDiamondWritable(
           await instance
             .connect(owner)
             .diamondCut(
-              [{ target: facet.address, action: 0, selectors }],
+              [{ facetAddress: facet.address, action: 0, functionSelectors }],
               ethers.constants.AddressZero,
               '0x',
             );
@@ -129,9 +131,9 @@ export function describeBehaviorOfDiamondWritable(
               instance.connect(owner).diamondCut(
                 [
                   {
-                    target: ethers.constants.AddressZero,
+                    facetAddress: ethers.constants.AddressZero,
                     action: 0,
-                    selectors: [ethers.utils.randomBytes(4)],
+                    functionSelectors: [ethers.utils.randomBytes(4)],
                   },
                 ],
                 ethers.constants.AddressZero,
@@ -146,9 +148,9 @@ export function describeBehaviorOfDiamondWritable(
           it('selector has already been added', async function () {
             const facetCuts = [
               {
-                target: facet.address,
+                facetAddress: facet.address,
                 action: 0,
-                selectors: [ethers.utils.randomBytes(4)],
+                functionSelectors: [ethers.utils.randomBytes(4)],
               },
             ];
 
@@ -179,7 +181,7 @@ export function describeBehaviorOfDiamondWritable(
           await instance
             .connect(owner)
             .diamondCut(
-              [{ target: facet.address, action: 0, selectors }],
+              [{ facetAddress: facet.address, action: 0, functionSelectors }],
               ethers.constants.AddressZero,
               '0x',
             );
@@ -197,13 +199,17 @@ export function describeBehaviorOfDiamondWritable(
             expect(facetReplacement[fn]).not.to.be.undefined;
           }
 
-          await instance
-            .connect(owner)
-            .diamondCut(
-              [{ target: facetReplacement.address, action: 1, selectors }],
-              ethers.constants.AddressZero,
-              '0x',
-            );
+          await instance.connect(owner).diamondCut(
+            [
+              {
+                facetAddress: facetReplacement.address,
+                action: 1,
+                functionSelectors,
+              },
+            ],
+            ethers.constants.AddressZero,
+            '0x',
+          );
 
           for (let fn of functions) {
             // call reverts, but with mock-specific message
@@ -219,9 +225,9 @@ export function describeBehaviorOfDiamondWritable(
               instance.connect(owner).diamondCut(
                 [
                   {
-                    target: ethers.constants.AddressZero,
+                    facetAddress: ethers.constants.AddressZero,
                     action: 1,
-                    selectors: [ethers.utils.randomBytes(4)],
+                    functionSelectors: [ethers.utils.randomBytes(4)],
                   },
                 ],
                 ethers.constants.AddressZero,
@@ -238,9 +244,9 @@ export function describeBehaviorOfDiamondWritable(
               instance.connect(owner).diamondCut(
                 [
                   {
-                    target: facet.address,
+                    facetAddress: facet.address,
                     action: 1,
-                    selectors: [ethers.utils.randomBytes(4)],
+                    functionSelectors: [ethers.utils.randomBytes(4)],
                   },
                 ],
                 ethers.constants.AddressZero,
@@ -258,9 +264,9 @@ export function describeBehaviorOfDiamondWritable(
             await instance.connect(owner).diamondCut(
               [
                 {
-                  target: instance.address,
+                  facetAddress: instance.address,
                   action: 0,
-                  selectors: [selector],
+                  functionSelectors: [selector],
                 },
               ],
               ethers.constants.AddressZero,
@@ -271,9 +277,9 @@ export function describeBehaviorOfDiamondWritable(
               instance.connect(owner).diamondCut(
                 [
                   {
-                    target: facet.address,
+                    facetAddress: facet.address,
                     action: 1,
-                    selectors: [selector],
+                    functionSelectors: [selector],
                   },
                 ],
                 ethers.constants.AddressZero,
@@ -291,9 +297,9 @@ export function describeBehaviorOfDiamondWritable(
             await instance.connect(owner).diamondCut(
               [
                 {
-                  target: facet.address,
+                  facetAddress: facet.address,
                   action: 0,
-                  selectors: [selector],
+                  functionSelectors: [selector],
                 },
               ],
               ethers.constants.AddressZero,
@@ -304,9 +310,9 @@ export function describeBehaviorOfDiamondWritable(
               instance.connect(owner).diamondCut(
                 [
                   {
-                    target: facet.address,
+                    facetAddress: facet.address,
                     action: 1,
-                    selectors: [selector],
+                    functionSelectors: [selector],
                   },
                 ],
                 ethers.constants.AddressZero,
@@ -331,7 +337,7 @@ export function describeBehaviorOfDiamondWritable(
           await instance
             .connect(owner)
             .diamondCut(
-              [{ target: facet.address, action: 0, selectors }],
+              [{ facetAddress: facet.address, action: 0, functionSelectors }],
               ethers.constants.AddressZero,
               '0x',
             );
@@ -343,13 +349,17 @@ export function describeBehaviorOfDiamondWritable(
             );
           }
 
-          await instance
-            .connect(owner)
-            .diamondCut(
-              [{ target: ethers.constants.AddressZero, action: 2, selectors }],
-              ethers.constants.AddressZero,
-              '0x',
-            );
+          await instance.connect(owner).diamondCut(
+            [
+              {
+                facetAddress: ethers.constants.AddressZero,
+                action: 2,
+                functionSelectors,
+              },
+            ],
+            ethers.constants.AddressZero,
+            '0x',
+          );
 
           for (let fn of functions) {
             await expect(
@@ -367,9 +377,9 @@ export function describeBehaviorOfDiamondWritable(
               instance.connect(owner).diamondCut(
                 [
                   {
-                    target: instance.address,
+                    facetAddress: instance.address,
                     action: 2,
-                    selectors: [ethers.utils.randomBytes(4)],
+                    functionSelectors: [ethers.utils.randomBytes(4)],
                   },
                 ],
                 ethers.constants.AddressZero,
@@ -386,9 +396,9 @@ export function describeBehaviorOfDiamondWritable(
               instance.connect(owner).diamondCut(
                 [
                   {
-                    target: ethers.constants.AddressZero,
+                    facetAddress: ethers.constants.AddressZero,
                     action: 2,
-                    selectors: [ethers.utils.randomBytes(4)],
+                    functionSelectors: [ethers.utils.randomBytes(4)],
                   },
                 ],
                 ethers.constants.AddressZero,
@@ -406,9 +416,9 @@ export function describeBehaviorOfDiamondWritable(
             await instance.connect(owner).diamondCut(
               [
                 {
-                  target: instance.address,
+                  facetAddress: instance.address,
                   action: 0,
-                  selectors: [selector],
+                  functionSelectors: [selector],
                 },
               ],
               ethers.constants.AddressZero,
@@ -419,9 +429,9 @@ export function describeBehaviorOfDiamondWritable(
               instance.connect(owner).diamondCut(
                 [
                   {
-                    target: ethers.constants.AddressZero,
+                    facetAddress: ethers.constants.AddressZero,
                     action: 2,
-                    selectors: [selector],
+                    functionSelectors: [selector],
                   },
                 ],
                 ethers.constants.AddressZero,
@@ -449,9 +459,9 @@ export function describeBehaviorOfDiamondWritable(
             instance.connect(owner).diamondCut(
               [
                 {
-                  target: ethers.constants.AddressZero,
+                  facetAddress: ethers.constants.AddressZero,
                   action: 3,
-                  selectors: [],
+                  functionSelectors: [],
                 },
               ],
               ethers.constants.AddressZero,
@@ -465,9 +475,9 @@ export function describeBehaviorOfDiamondWritable(
             instance.connect(owner).diamondCut(
               [
                 {
-                  target: ethers.constants.AddressZero,
+                  facetAddress: ethers.constants.AddressZero,
                   action: 0,
-                  selectors: [],
+                  functionSelectors: [],
                 },
               ],
               ethers.constants.AddressZero,

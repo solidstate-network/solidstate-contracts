@@ -77,9 +77,9 @@ abstract contract SolidStateDiamond is
         FacetCut[] memory facetCuts = new FacetCut[](1);
 
         facetCuts[0] = FacetCut({
-            target: address(this),
+            facetAddress: address(this),
             action: FacetCutAction.ADD,
-            selectors: selectors
+            functionSelectors: selectors
         });
 
         _diamondCut(facetCuts, address(0), '');

@@ -1,11 +1,14 @@
 import { describeBehaviorOfERC165Base } from '../../../introspection';
 import { describeFilter } from '@solidstate/library';
-import { IDiamondReadable } from '@solidstate/typechain-types';
+import {
+  IDiamondReadable,
+  IDiamondWritableInternal,
+} from '@solidstate/typechain-types';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
 
 export interface DiamondReadableBehaviorArgs {
-  facetCuts: any[];
+  facetCuts: IDiamondWritableInternal.FacetCutStruct[];
 }
 
 export function describeBehaviorOfDiamondReadable(
@@ -35,7 +38,7 @@ export function describeBehaviorOfDiamondReadable(
     describe('#facets()', function () {
       it('returns facet cuts', async function () {
         expect(await instance.callStatic['facets()']()).to.have.deep.members(
-          facetCuts.map((fc) => [fc.target, fc.selectors]),
+          facetCuts.map((fc) => [fc.facetAddress, fc.functionSelectors]),
         );
       });
     });
@@ -43,7 +46,7 @@ export function describeBehaviorOfDiamondReadable(
     describe('#facetAddresses()', function () {
       it('returns facets', async function () {
         expect(await instance.callStatic['facetAddresses()']()).to.have.members(
-          facetCuts.map((fc) => fc.target),
+          facetCuts.map((fc) => fc.facetAddress),
         );
       });
     });
@@ -53,9 +56,9 @@ export function describeBehaviorOfDiamondReadable(
         for (let facet of facetCuts) {
           expect(
             await instance.callStatic['facetFunctionSelectors(address)'](
-              facet.target,
+              facet.facetAddress,
             ),
-          ).to.have.members(facet.selectors);
+          ).to.have.members(facet.functionSelectors);
         }
       });
 
@@ -71,10 +74,10 @@ export function describeBehaviorOfDiamondReadable(
     describe('#facetAddress(bytes4)', function () {
       it('returns facet for given selector', async function () {
         for (let facet of facetCuts) {
-          for (let selector of facet.selectors) {
+          for (let selector of facet.functionSelectors) {
             expect(
               await instance.callStatic['facetAddress(bytes4)'](selector),
-            ).to.equal(facet.target);
+            ).to.equal(facet.facetAddress);
           }
         }
       });
