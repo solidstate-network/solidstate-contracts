@@ -15,8 +15,11 @@ library IncrementalMerkleTree {
      * @return treeSize size of tree
      */
     function size(Tree storage t) internal view returns (uint256 treeSize) {
-        if (t.height() > 0) {
-            treeSize = t.nodes[0].length;
+        bytes32[][] storage nodes = t.nodes;
+
+        assembly {
+            mstore(0x00, nodes.slot)
+            treeSize := sload(keccak256(0x00, 0x20))
         }
     }
 
@@ -24,10 +27,14 @@ library IncrementalMerkleTree {
      * @notice query one-indexed height of tree
      * @dev conventional zero-indexed height would require the use of signed integers, so height is one-indexed instead
      * @param t Tree struct storage reference
-     * @return one-indexed height of tree
+     * @return treeHeight one-indexed height of tree
      */
-    function height(Tree storage t) internal view returns (uint256) {
-        return t.nodes.length;
+    function height(Tree storage t) internal view returns (uint256 treeHeight) {
+        bytes32[][] storage nodes = t.nodes;
+
+        assembly {
+            treeHeight := sload(nodes.slot)
+        }
     }
 
     /**
@@ -36,11 +43,15 @@ library IncrementalMerkleTree {
      * @return hash root hash
      */
     function root(Tree storage t) internal view returns (bytes32 hash) {
+        bytes32[][] storage nodes = t.nodes;
+
         uint256 treeHeight = t.height();
 
         if (treeHeight > 0) {
-            unchecked {
-                hash = t.nodes[treeHeight - 1][0];
+            assembly {
+                mstore(0x00, nodes.slot)
+                mstore(0x00, add(keccak256(0x00, 0x20), sub(treeHeight, 1)))
+                hash := sload(keccak256(0x00, 0x20))
             }
         }
     }
@@ -59,59 +70,58 @@ library IncrementalMerkleTree {
      */
     function push(Tree storage t, bytes32 hash) internal {
         unchecked {
-            uint256 treeHeight = t.height();
-            uint256 treeSize = t.size();
+            // index to add to tree
+            uint256 updateIndex = t.size();
 
             // add new layer if tree is at capacity
 
-            if (treeSize == (1 << treeHeight) >> 1) {
+            if (updateIndex == (1 << t.height()) >> 1) {
                 t.nodes.push();
-                treeHeight++;
             }
 
             // add new columns if rows are full
 
             uint256 row;
-            uint256 col = treeSize;
+            uint256 col = updateIndex;
 
-            while (row < treeHeight && t.nodes[row].length <= col) {
+            while (col == t.nodes[row].length) {
                 t.nodes[row].push();
                 row++;
+                if (col == 0) break;
                 col >>= 1;
             }
 
             // add hash to tree
 
-            t.set(treeSize, hash);
+            t.set(updateIndex, hash);
         }
     }
 
     function pop(Tree storage t) internal {
-        uint256 treeHeight = t.height();
-        uint256 treeSize = t.size() - 1;
+        unchecked {
+            // index to remove from tree
+            uint256 updateIndex = t.size() - 1;
 
-        // remove layer if tree has excess capacity
+            // remove columns if rows are too long
 
-        if (treeSize == (1 << treeHeight) >> 2) {
-            treeHeight--;
-            t.nodes.pop();
-        }
+            uint256 row;
+            uint256 col = updateIndex;
 
-        // remove columns if rows are too long
+            while (col != t.nodes[row].length) {
+                t.nodes[row].pop();
+                row++;
+                col >>= 1;
+                if (col == 0) break;
+            }
 
-        uint256 row;
-        uint256 col = treeSize;
+            // if new tree is full, remove excess layer
+            // if no layer is removed, recalculate hashes
 
-        while (row < treeHeight && t.nodes[row].length > col) {
-            t.nodes[row].pop();
-            row++;
-            col = (col + 1) >> 1;
-        }
-
-        // recalculate hashes
-
-        if (treeSize > 0) {
-            t.set(treeSize - 1, t.at(treeSize - 1));
+            if (updateIndex == (1 << t.height()) >> 2) {
+                t.nodes.pop();
+            } else {
+                t.set(updateIndex - 1, t.at(updateIndex - 1));
+            }
         }
     }
 
@@ -122,9 +132,7 @@ library IncrementalMerkleTree {
      * @param hash new hash to add
      */
     function set(Tree storage t, uint256 index, bytes32 hash) internal {
-        unchecked {
-            _set(t.nodes, 0, index, t.height() - 1, hash);
-        }
+        _set(t.nodes, 0, index, t.size(), hash);
     }
 
     /**
@@ -132,21 +140,26 @@ library IncrementalMerkleTree {
      * @param nodes internal tree structure storage reference
      * @param rowIndex index of current row to update
      * @param colIndex index of current column to update
-     * @param rootIndex index of root row
+     * @param rowLength length of row at rowIndex
      * @param hash hash to store at current position
      */
     function _set(
         bytes32[][] storage nodes,
         uint256 rowIndex,
         uint256 colIndex,
-        uint256 rootIndex,
+        uint256 rowLength,
         bytes32 hash
     ) private {
         bytes32[] storage row = nodes[rowIndex];
 
-        row[colIndex] = hash;
+        // store hash in array via assembly to avoid array length sload
 
-        if (rowIndex == rootIndex) return;
+        assembly {
+            mstore(0x00, row.slot)
+            sstore(add(keccak256(0x00, 0x20), colIndex), hash)
+        }
+
+        if (rowLength == 1) return;
 
         unchecked {
             if (colIndex & 1 == 1) {
@@ -160,7 +173,7 @@ library IncrementalMerkleTree {
                     mstore(0x20, hash)
                     hash := keccak256(0x00, 0x40)
                 }
-            } else if (colIndex + 1 < row.length) {
+            } else if (colIndex < rowLength - 1) {
                 // sibling is on the right (and sibling exists)
                 assembly {
                     mstore(0x00, row.slot)
@@ -173,7 +186,13 @@ library IncrementalMerkleTree {
                 }
             }
 
-            _set(nodes, rowIndex + 1, colIndex >> 1, rootIndex, hash);
+            _set(
+                nodes,
+                rowIndex + 1,
+                colIndex >> 1,
+                (rowLength + 1) >> 1,
+                hash
+            );
         }
     }
 }
