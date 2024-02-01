@@ -1,0 +1,12 @@
+[
+  {
+    "inputs": [],
+    "name": "DoublyLinkedList__InvalidInput",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "DoublyLinkedList__NonExistentEntry",
+    "type": "error"
+  }
+]

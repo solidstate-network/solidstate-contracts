@@ -38,9 +38,8 @@ describe('CloneFactory', () => {
       it('deploys clone and returns deployment address', async () => {
         const salt = ethers.randomBytes(32);
 
-        const address = await instance['__deployClone(bytes32)'].staticCall(
-          salt,
-        );
+        const address =
+          await instance['__deployClone(bytes32)'].staticCall(salt);
         expect(address).to.be.properAddress;
 
         await instance['__deployClone(bytes32)'](salt);

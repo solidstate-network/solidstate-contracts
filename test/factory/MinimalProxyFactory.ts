@@ -21,9 +21,8 @@ describe('MinimalProxyFactory', () => {
       it('deploys minimal proxy and returns deployment address', async () => {
         const target = await instance.getAddress();
 
-        const address = await instance[
-          '__deployMinimalProxy(address)'
-        ].staticCall(target);
+        const address =
+          await instance['__deployMinimalProxy(address)'].staticCall(target);
         expect(address).to.be.properAddress;
 
         await instance['__deployMinimalProxy(address)'](target);
