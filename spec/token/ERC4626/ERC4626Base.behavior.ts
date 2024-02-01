@@ -481,9 +481,8 @@ export function describeBehaviorOfERC4626Base(
       describe('reverts if', () => {
         it('withdraw amount is too large', async () => {
           const assetAmount = 10n;
-          const shareAmount = await instance.convertToShares.staticCall(
-            assetAmount,
-          );
+          const shareAmount =
+            await instance.convertToShares.staticCall(assetAmount);
 
           await args.mint(depositor.address, shareAmount);
 

@@ -99,7 +99,7 @@ export function describeBehaviorOfDiamondWritable(
               contract[fn].staticCall(),
             ).to.be.revertedWithCustomError(
               instance,
-              'Proxy__ImplementationIsNotContract',
+              'AddressUtils__NotContract',
             );
           }
 
@@ -359,7 +359,7 @@ export function describeBehaviorOfDiamondWritable(
               contract[fn].staticCall(),
             ).to.be.revertedWithCustomError(
               instance,
-              'Proxy__ImplementationIsNotContract',
+              'AddressUtils__NotContract',
             );
           }
         });

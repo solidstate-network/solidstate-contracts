@@ -11,37 +11,21 @@ import { IProxy } from './IProxy.sol';
 abstract contract Proxy is IProxy {
     using AddressUtils for address;
 
-    /**
-     * @notice delegate all calls to implementation contract
-     * @dev reverts if implementation address contains no code, for compatibility with metamorphic contracts
-     * @dev memory location in use by assembly may be unsafe in other contexts
-     */
     fallback() external payable virtual {
-        address implementation = _getImplementation();
-
-        if (!implementation.isContract())
-            revert Proxy__ImplementationIsNotContract();
+        bytes memory returnData = _handleDelegateCall();
 
         assembly {
-            calldatacopy(0, 0, calldatasize())
-            let result := delegatecall(
-                gas(),
-                implementation,
-                0,
-                calldatasize(),
-                0,
-                0
-            )
-            returndatacopy(0, 0, returndatasize())
-
-            switch result
-            case 0 {
-                revert(0, returndatasize())
-            }
-            default {
-                return(0, returndatasize())
-            }
+            let returnData_size := mload(returnData)
+            return(add(32, returnData), returnData_size)
         }
+    }
+
+    /**
+     * @notice delegate all calls to implementation contract
+     */
+    function _handleDelegateCall() internal virtual returns (bytes memory) {
+        address implementation = _getImplementation();
+        return implementation.functionDelegateCall(msg.data);
     }
 
     /**

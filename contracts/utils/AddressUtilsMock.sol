@@ -51,4 +51,15 @@ contract AddressUtilsMock {
     ) external returns (bytes memory) {
         return target.functionCallWithValue(data, value, error);
     }
+
+    function functionDelegateCall(
+        address target,
+        bytes memory data
+    ) external returns (bytes memory) {
+        return target.functionDelegateCall(data);
+    }
+
+    function fn() external returns (bool) {
+        return true;
+    }
 }

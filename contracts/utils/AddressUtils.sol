@@ -69,6 +69,28 @@ library AddressUtils {
         return _functionCallWithValue(target, data, value, error);
     }
 
+    function functionDelegateCall(
+        address target,
+        bytes memory data
+    ) internal returns (bytes memory) {
+        return
+            functionDelegateCall(
+                target,
+                data,
+                'AddressUtils: failed low-level delegatecall'
+            );
+    }
+
+    function functionDelegateCall(
+        address target,
+        bytes memory data,
+        string memory error
+    ) internal returns (bytes memory) {
+        _revertIfNotContract(target);
+        (bool success, bytes memory returnData) = target.delegatecall(data);
+        return _verifyCallResultFromTarget(success, returnData, error);
+    }
+
     /**
      * @notice execute arbitrary external call with limited gas usage and amount of copied return data
      * @dev derived from https://github.com/nomad-xyz/ExcessivelySafeCall (MIT License)
@@ -122,12 +144,18 @@ library AddressUtils {
         uint256 value,
         string memory error
     ) private returns (bytes memory) {
-        if (!isContract(target)) revert AddressUtils__NotContract();
-
+        _revertIfNotContract(target);
         (bool success, bytes memory returnData) = target.call{ value: value }(
             data
         );
+        return _verifyCallResultFromTarget(success, returnData, error);
+    }
 
+    function _verifyCallResultFromTarget(
+        bool success,
+        bytes memory returnData,
+        string memory error
+    ) private pure returns (bytes memory) {
         if (success) {
             return returnData;
         } else if (returnData.length > 0) {
@@ -138,5 +166,9 @@ library AddressUtils {
         } else {
             revert(error);
         }
+    }
+
+    function _revertIfNotContract(address target) private view {
+        if (!isContract(target)) revert AddressUtils__NotContract();
     }
 }
