@@ -34,7 +34,9 @@ abstract contract ERC1155Base is IERC1155Base, ERC1155BaseInternal {
             revert ERC1155Base__ArrayLengthMismatch();
 
         mapping(uint256 => mapping(address => uint256))
-            storage balances = ERC1155BaseStorage.layout().balances;
+            storage balances = ERC1155BaseStorage
+                .layout(ERC1155BaseStorage.DEFAULT_STORAGE_SLOT)
+                .balances;
 
         uint256[] memory batchBalances = new uint256[](accounts.length);
 
@@ -56,7 +58,10 @@ abstract contract ERC1155Base is IERC1155Base, ERC1155BaseInternal {
         address account,
         address operator
     ) public view virtual returns (bool) {
-        return ERC1155BaseStorage.layout().operatorApprovals[account][operator];
+        return
+            ERC1155BaseStorage
+                .layout(ERC1155BaseStorage.DEFAULT_STORAGE_SLOT)
+                .operatorApprovals[account][operator];
     }
 
     /**
@@ -64,9 +69,9 @@ abstract contract ERC1155Base is IERC1155Base, ERC1155BaseInternal {
      */
     function setApprovalForAll(address operator, bool status) public virtual {
         if (msg.sender == operator) revert ERC1155Base__SelfApproval();
-        ERC1155BaseStorage.layout().operatorApprovals[msg.sender][
-            operator
-        ] = status;
+        ERC1155BaseStorage
+            .layout(ERC1155BaseStorage.DEFAULT_STORAGE_SLOT)
+            .operatorApprovals[msg.sender][operator] = status;
         emit ApprovalForAll(msg.sender, operator, status);
     }
 

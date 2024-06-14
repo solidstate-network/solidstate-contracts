@@ -24,14 +24,18 @@ abstract contract PausableInternal is IPausableInternal {
      * @return status whether contract is paused
      */
     function _paused() internal view virtual returns (bool status) {
-        status = PausableStorage.layout().paused;
+        status = PausableStorage
+            .layout(PausableStorage.DEFAULT_STORAGE_SLOT)
+            .paused;
     }
 
     /**
      * @notice Triggers paused state, when contract is unpaused.
      */
     function _pause() internal virtual whenNotPaused {
-        PausableStorage.layout().paused = true;
+        PausableStorage
+            .layout(PausableStorage.DEFAULT_STORAGE_SLOT)
+            .paused = true;
         emit Paused(msg.sender);
     }
 
@@ -39,7 +43,9 @@ abstract contract PausableInternal is IPausableInternal {
      * @notice Triggers unpaused state, when contract is paused.
      */
     function _unpause() internal virtual whenPaused {
-        delete PausableStorage.layout().paused;
+        delete PausableStorage
+            .layout(PausableStorage.DEFAULT_STORAGE_SLOT)
+            .paused;
         emit Unpaused(msg.sender);
     }
 }

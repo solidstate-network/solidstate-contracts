@@ -15,7 +15,9 @@ abstract contract ERC1155MetadataInternal is IERC1155MetadataInternal {
      * @param baseURI base URI
      */
     function _setBaseURI(string memory baseURI) internal {
-        ERC1155MetadataStorage.layout().baseURI = baseURI;
+        ERC1155MetadataStorage
+            .layout(ERC1155MetadataStorage.DEFAULT_STORAGE_SLOT)
+            .baseURI = baseURI;
     }
 
     /**
@@ -24,7 +26,9 @@ abstract contract ERC1155MetadataInternal is IERC1155MetadataInternal {
      * @param tokenURI per-token URI
      */
     function _setTokenURI(uint256 tokenId, string memory tokenURI) internal {
-        ERC1155MetadataStorage.layout().tokenURIs[tokenId] = tokenURI;
+        ERC1155MetadataStorage
+            .layout(ERC1155MetadataStorage.DEFAULT_STORAGE_SLOT)
+            .tokenURIs[tokenId] = tokenURI;
         emit URI(tokenURI, tokenId);
     }
 }

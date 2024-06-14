@@ -14,7 +14,10 @@ abstract contract ERC20MetadataInternal is IERC20MetadataInternal {
      * @return token name
      */
     function _name() internal view virtual returns (string memory) {
-        return ERC20MetadataStorage.layout().name;
+        return
+            ERC20MetadataStorage
+                .layout(ERC20MetadataStorage.DEFAULT_STORAGE_SLOT)
+                .name;
     }
 
     /**
@@ -22,7 +25,10 @@ abstract contract ERC20MetadataInternal is IERC20MetadataInternal {
      * @return token symbol
      */
     function _symbol() internal view virtual returns (string memory) {
-        return ERC20MetadataStorage.layout().symbol;
+        return
+            ERC20MetadataStorage
+                .layout(ERC20MetadataStorage.DEFAULT_STORAGE_SLOT)
+                .symbol;
     }
 
     /**
@@ -30,18 +36,27 @@ abstract contract ERC20MetadataInternal is IERC20MetadataInternal {
      * @return token decimals
      */
     function _decimals() internal view virtual returns (uint8) {
-        return ERC20MetadataStorage.layout().decimals;
+        return
+            ERC20MetadataStorage
+                .layout(ERC20MetadataStorage.DEFAULT_STORAGE_SLOT)
+                .decimals;
     }
 
     function _setName(string memory name) internal virtual {
-        ERC20MetadataStorage.layout().name = name;
+        ERC20MetadataStorage
+            .layout(ERC20MetadataStorage.DEFAULT_STORAGE_SLOT)
+            .name = name;
     }
 
     function _setSymbol(string memory symbol) internal virtual {
-        ERC20MetadataStorage.layout().symbol = symbol;
+        ERC20MetadataStorage
+            .layout(ERC20MetadataStorage.DEFAULT_STORAGE_SLOT)
+            .symbol = symbol;
     }
 
     function _setDecimals(uint8 decimals) internal virtual {
-        ERC20MetadataStorage.layout().decimals = decimals;
+        ERC20MetadataStorage
+            .layout(ERC20MetadataStorage.DEFAULT_STORAGE_SLOT)
+            .decimals = decimals;
     }
 }

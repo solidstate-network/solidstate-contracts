@@ -22,7 +22,10 @@ abstract contract ERC721MetadataInternal is
      * @return token name
      */
     function _name() internal view virtual returns (string memory) {
-        return ERC721MetadataStorage.layout().name;
+        return
+            ERC721MetadataStorage
+                .layout(ERC721MetadataStorage.DEFAULT_STORAGE_SLOT)
+                .name;
     }
 
     /**
@@ -30,7 +33,10 @@ abstract contract ERC721MetadataInternal is
      * @return token symbol
      */
     function _symbol() internal view virtual returns (string memory) {
-        return ERC721MetadataStorage.layout().symbol;
+        return
+            ERC721MetadataStorage
+                .layout(ERC721MetadataStorage.DEFAULT_STORAGE_SLOT)
+                .symbol;
     }
 
     /**
@@ -42,7 +48,9 @@ abstract contract ERC721MetadataInternal is
     ) internal view virtual returns (string memory) {
         if (!_exists(tokenId)) revert ERC721Metadata__NonExistentToken();
 
-        ERC721MetadataStorage.Layout storage l = ERC721MetadataStorage.layout();
+        ERC721MetadataStorage.Layout storage l = ERC721MetadataStorage.layout(
+            ERC721MetadataStorage.DEFAULT_STORAGE_SLOT
+        );
 
         string memory tokenIdURI = l.tokenURIs[tokenId];
         string memory baseURI = l.baseURI;
@@ -68,7 +76,9 @@ abstract contract ERC721MetadataInternal is
         super._beforeTokenTransfer(from, to, tokenId);
 
         if (to == address(0)) {
-            delete ERC721MetadataStorage.layout().tokenURIs[tokenId];
+            delete ERC721MetadataStorage
+                .layout(ERC721MetadataStorage.DEFAULT_STORAGE_SLOT)
+                .tokenURIs[tokenId];
         }
     }
 }

@@ -13,7 +13,9 @@ contract SolidStateERC721Mock is SolidStateERC721 {
         string memory symbol,
         string memory baseURI
     ) {
-        ERC721MetadataStorage.Layout storage l = ERC721MetadataStorage.layout();
+        ERC721MetadataStorage.Layout storage l = ERC721MetadataStorage.layout(
+            ERC721MetadataStorage.DEFAULT_STORAGE_SLOT
+        );
         l.name = name;
         l.symbol = symbol;
         l.baseURI = baseURI;

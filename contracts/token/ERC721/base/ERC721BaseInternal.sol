@@ -21,17 +21,28 @@ abstract contract ERC721BaseInternal is IERC721BaseInternal {
         address account
     ) internal view virtual returns (uint256) {
         if (account == address(0)) revert ERC721Base__BalanceQueryZeroAddress();
-        return ERC721BaseStorage.layout().holderTokens[account].length();
+        return
+            ERC721BaseStorage
+                .layout(ERC721BaseStorage.DEFAULT_STORAGE_SLOT)
+                .holderTokens[account]
+                .length();
     }
 
     function _ownerOf(uint256 tokenId) internal view virtual returns (address) {
-        address owner = ERC721BaseStorage.layout().tokenOwners.get(tokenId);
+        address owner = ERC721BaseStorage
+            .layout(ERC721BaseStorage.DEFAULT_STORAGE_SLOT)
+            .tokenOwners
+            .get(tokenId);
         if (owner == address(0)) revert ERC721Base__InvalidOwner();
         return owner;
     }
 
     function _exists(uint256 tokenId) internal view virtual returns (bool) {
-        return ERC721BaseStorage.layout().tokenOwners.contains(tokenId);
+        return
+            ERC721BaseStorage
+                .layout(ERC721BaseStorage.DEFAULT_STORAGE_SLOT)
+                .tokenOwners
+                .contains(tokenId);
     }
 
     function _getApproved(
@@ -39,14 +50,20 @@ abstract contract ERC721BaseInternal is IERC721BaseInternal {
     ) internal view virtual returns (address) {
         if (!_exists(tokenId)) revert ERC721Base__NonExistentToken();
 
-        return ERC721BaseStorage.layout().tokenApprovals[tokenId];
+        return
+            ERC721BaseStorage
+                .layout(ERC721BaseStorage.DEFAULT_STORAGE_SLOT)
+                .tokenApprovals[tokenId];
     }
 
     function _isApprovedForAll(
         address account,
         address operator
     ) internal view virtual returns (bool) {
-        return ERC721BaseStorage.layout().operatorApprovals[account][operator];
+        return
+            ERC721BaseStorage
+                .layout(ERC721BaseStorage.DEFAULT_STORAGE_SLOT)
+                .operatorApprovals[account][operator];
     }
 
     function _isApprovedOrOwner(
@@ -68,7 +85,9 @@ abstract contract ERC721BaseInternal is IERC721BaseInternal {
 
         _beforeTokenTransfer(address(0), to, tokenId);
 
-        ERC721BaseStorage.Layout storage l = ERC721BaseStorage.layout();
+        ERC721BaseStorage.Layout storage l = ERC721BaseStorage.layout(
+            ERC721BaseStorage.DEFAULT_STORAGE_SLOT
+        );
 
         l.holderTokens[to].add(tokenId);
         l.tokenOwners.set(tokenId, to);
@@ -95,7 +114,9 @@ abstract contract ERC721BaseInternal is IERC721BaseInternal {
 
         _beforeTokenTransfer(owner, address(0), tokenId);
 
-        ERC721BaseStorage.Layout storage l = ERC721BaseStorage.layout();
+        ERC721BaseStorage.Layout storage l = ERC721BaseStorage.layout(
+            ERC721BaseStorage.DEFAULT_STORAGE_SLOT
+        );
 
         l.holderTokens[owner].remove(tokenId);
         l.tokenOwners.remove(tokenId);
@@ -118,7 +139,9 @@ abstract contract ERC721BaseInternal is IERC721BaseInternal {
 
         _beforeTokenTransfer(from, to, tokenId);
 
-        ERC721BaseStorage.Layout storage l = ERC721BaseStorage.layout();
+        ERC721BaseStorage.Layout storage l = ERC721BaseStorage.layout(
+            ERC721BaseStorage.DEFAULT_STORAGE_SLOT
+        );
 
         l.holderTokens[from].remove(tokenId);
         l.holderTokens[to].add(tokenId);
@@ -180,7 +203,9 @@ abstract contract ERC721BaseInternal is IERC721BaseInternal {
         if (msg.sender != owner && !_isApprovedForAll(owner, msg.sender))
             revert ERC721Base__NotOwnerOrApproved();
 
-        ERC721BaseStorage.layout().tokenApprovals[tokenId] = operator;
+        ERC721BaseStorage
+            .layout(ERC721BaseStorage.DEFAULT_STORAGE_SLOT)
+            .tokenApprovals[tokenId] = operator;
         emit Approval(owner, operator, tokenId);
     }
 
@@ -189,9 +214,9 @@ abstract contract ERC721BaseInternal is IERC721BaseInternal {
         bool status
     ) internal virtual {
         if (operator == msg.sender) revert ERC721Base__SelfApproval();
-        ERC721BaseStorage.layout().operatorApprovals[msg.sender][
-            operator
-        ] = status;
+        ERC721BaseStorage
+            .layout(ERC721BaseStorage.DEFAULT_STORAGE_SLOT)
+            .operatorApprovals[msg.sender][operator] = status;
         emit ApprovalForAll(msg.sender, operator, status);
     }
 

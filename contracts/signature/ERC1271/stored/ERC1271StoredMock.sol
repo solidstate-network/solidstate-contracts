@@ -7,7 +7,9 @@ import { ERC1271Stored } from './ERC1271Stored.sol';
 
 contract ERC1271StoredMock is ERC1271Stored {
     constructor(bytes32 hash) {
-        ERC1271StoredStorage.layout().hashes[hash] = true;
+        ERC1271StoredStorage
+            .layout(ERC1271StoredStorage.DEFAULT_STORAGE_SLOT)
+            .hashes[hash] = true;
     }
 
     function __isValidSignature(

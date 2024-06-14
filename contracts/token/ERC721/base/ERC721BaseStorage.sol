@@ -9,8 +9,14 @@ library ERC721BaseStorage {
     using EnumerableSet for EnumerableSet.UintSet;
     using EnumerableMap for EnumerableMap.UintToAddressMap;
 
-    bytes32 internal constant STORAGE_SLOT =
-        keccak256('solidstate.contracts.storage.ERC721Base');
+    bytes32 internal constant DEFAULT_STORAGE_SLOT =
+        keccak256(
+            abi.encode(
+                uint256(
+                    keccak256(bytes('solidstate.contracts.storage.ERC721Base'))
+                ) - 1
+            )
+        ) & ~bytes32(uint256(0xff));
 
     struct Layout {
         EnumerableMap.UintToAddressMap tokenOwners;
@@ -20,7 +26,10 @@ library ERC721BaseStorage {
     }
 
     function layout() internal pure returns (Layout storage l) {
-        bytes32 slot = STORAGE_SLOT;
+        l = layout(DEFAULT_STORAGE_SLOT);
+    }
+
+    function layout(bytes32 slot) internal pure returns (Layout storage l) {
         assembly {
             l.slot := slot
         }

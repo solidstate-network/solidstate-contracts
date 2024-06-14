@@ -1,3 +1,1 @@
-export * from './base';
-export * from './ownable';
-export * from './stored';
+export * from './ERC1271';

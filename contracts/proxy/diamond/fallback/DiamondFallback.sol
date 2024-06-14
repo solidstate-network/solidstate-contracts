@@ -61,7 +61,9 @@ abstract contract DiamondFallback is
         virtual
         returns (address fallbackAddress)
     {
-        fallbackAddress = DiamondBaseStorage.layout().fallbackAddress;
+        fallbackAddress = DiamondBaseStorage
+            .layout(DiamondBaseStorage.DEFAULT_STORAGE_SLOT)
+            .fallbackAddress;
     }
 
     /**
@@ -69,6 +71,8 @@ abstract contract DiamondFallback is
      * @param fallbackAddress address of fallback implementation
      */
     function _setFallbackAddress(address fallbackAddress) internal virtual {
-        DiamondBaseStorage.layout().fallbackAddress = fallbackAddress;
+        DiamondBaseStorage
+            .layout(DiamondBaseStorage.DEFAULT_STORAGE_SLOT)
+            .fallbackAddress = fallbackAddress;
     }
 }

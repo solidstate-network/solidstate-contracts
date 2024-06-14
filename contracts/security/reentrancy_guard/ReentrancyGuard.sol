@@ -24,20 +24,26 @@ abstract contract ReentrancyGuard is IReentrancyGuard {
      */
     function _isReentrancyGuardLocked() internal view virtual returns (bool) {
         return
-            ReentrancyGuardStorage.layout().status == REENTRANCY_STATUS_LOCKED;
+            ReentrancyGuardStorage
+                .layout(ReentrancyGuardStorage.DEFAULT_STORAGE_SLOT)
+                .status == REENTRANCY_STATUS_LOCKED;
     }
 
     /**
      * @notice lock functions that use the nonReentrant modifier
      */
     function _lockReentrancyGuard() internal virtual {
-        ReentrancyGuardStorage.layout().status = REENTRANCY_STATUS_LOCKED;
+        ReentrancyGuardStorage
+            .layout(ReentrancyGuardStorage.DEFAULT_STORAGE_SLOT)
+            .status = REENTRANCY_STATUS_LOCKED;
     }
 
     /**
      * @notice unlock functions that use the nonReentrant modifier
      */
     function _unlockReentrancyGuard() internal virtual {
-        ReentrancyGuardStorage.layout().status = REENTRANCY_STATUS_UNLOCKED;
+        ReentrancyGuardStorage
+            .layout(ReentrancyGuardStorage.DEFAULT_STORAGE_SLOT)
+            .status = REENTRANCY_STATUS_UNLOCKED;
     }
 }

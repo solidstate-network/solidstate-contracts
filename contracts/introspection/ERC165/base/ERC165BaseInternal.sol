@@ -17,7 +17,10 @@ abstract contract ERC165BaseInternal is IERC165BaseInternal {
     function _supportsInterface(
         bytes4 interfaceId
     ) internal view virtual returns (bool) {
-        return ERC165BaseStorage.layout().supportedInterfaces[interfaceId];
+        return
+            ERC165BaseStorage
+                .layout(ERC165BaseStorage.DEFAULT_STORAGE_SLOT)
+                .supportedInterfaces[interfaceId];
     }
 
     /**
@@ -30,6 +33,8 @@ abstract contract ERC165BaseInternal is IERC165BaseInternal {
         bool status
     ) internal virtual {
         if (interfaceId == 0xffffffff) revert ERC165Base__InvalidInterfaceId();
-        ERC165BaseStorage.layout().supportedInterfaces[interfaceId] = status;
+        ERC165BaseStorage
+            .layout(ERC165BaseStorage.DEFAULT_STORAGE_SLOT)
+            .supportedInterfaces[interfaceId] = status;
     }
 }

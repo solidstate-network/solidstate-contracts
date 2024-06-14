@@ -24,7 +24,10 @@ abstract contract ERC4626BaseInternal is
      * @return base token address
      */
     function _asset() internal view virtual returns (address) {
-        return ERC4626BaseStorage.layout().asset;
+        return
+            ERC4626BaseStorage
+                .layout(ERC4626BaseStorage.DEFAULT_STORAGE_SLOT)
+                .asset;
     }
 
     /**

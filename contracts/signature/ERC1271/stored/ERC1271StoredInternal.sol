@@ -14,12 +14,16 @@ abstract contract ERC1271StoredInternal is ERC1271BaseInternal {
         bytes memory
     ) internal view virtual override returns (bytes4 magicValue) {
         return
-            ERC1271StoredStorage.layout().hashes[hash]
+            ERC1271StoredStorage
+                .layout(ERC1271StoredStorage.DEFAULT_STORAGE_SLOT)
+                .hashes[hash]
                 ? MAGIC_VALUE
                 : bytes4(0);
     }
 
     function _setValidSignature(bytes32 hash, bool status) internal {
-        ERC1271StoredStorage.layout().hashes[hash] = status;
+        ERC1271StoredStorage
+            .layout(ERC1271StoredStorage.DEFAULT_STORAGE_SLOT)
+            .hashes[hash] = status;
     }
 }

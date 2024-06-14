@@ -12,7 +12,9 @@ abstract contract ERC20SnapshotInternal is ERC20BaseInternal {
     event Snapshot(uint256 id);
 
     function _snapshot() internal virtual returns (uint256) {
-        ERC20SnapshotStorage.Layout storage l = ERC20SnapshotStorage.layout();
+        ERC20SnapshotStorage.Layout storage l = ERC20SnapshotStorage.layout(
+            ERC20SnapshotStorage.DEFAULT_STORAGE_SLOT
+        );
 
         l.snapshotId++;
 
@@ -23,14 +25,18 @@ abstract contract ERC20SnapshotInternal is ERC20BaseInternal {
 
     function _updateAccountSnapshot(address account) private {
         _updateSnapshot(
-            ERC20SnapshotStorage.layout().accountBalanceSnapshots[account],
+            ERC20SnapshotStorage
+                .layout(ERC20SnapshotStorage.DEFAULT_STORAGE_SLOT)
+                .accountBalanceSnapshots[account],
             _balanceOf(account)
         );
     }
 
     function _updateTotalSupplySnapshot() private {
         _updateSnapshot(
-            ERC20SnapshotStorage.layout().totalSupplySnapshots,
+            ERC20SnapshotStorage
+                .layout(ERC20SnapshotStorage.DEFAULT_STORAGE_SLOT)
+                .totalSupplySnapshots,
             _totalSupply()
         );
     }
@@ -39,7 +45,9 @@ abstract contract ERC20SnapshotInternal is ERC20BaseInternal {
         ERC20SnapshotStorage.Snapshots storage snapshots,
         uint256 value
     ) private {
-        uint256 current = ERC20SnapshotStorage.layout().snapshotId;
+        uint256 current = ERC20SnapshotStorage
+            .layout(ERC20SnapshotStorage.DEFAULT_STORAGE_SLOT)
+            .snapshotId;
 
         if (_lastSnapshotId(snapshots.ids) < current) {
             snapshots.ids.push(current);

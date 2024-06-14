@@ -27,7 +27,9 @@ abstract contract PartiallyPausableInternal is IPartiallyPausableInternal {
     function _partiallyPaused(
         bytes32 key
     ) internal view virtual returns (bool status) {
-        status = PartiallyPausableStorage.layout().partiallyPaused[key];
+        status = PartiallyPausableStorage
+            .layout(PartiallyPausableStorage.DEFAULT_STORAGE_SLOT)
+            .partiallyPaused[key];
     }
 
     /**
@@ -37,7 +39,9 @@ abstract contract PartiallyPausableInternal is IPartiallyPausableInternal {
     function _partiallyPause(
         bytes32 key
     ) internal virtual whenNotPartiallyPaused(key) {
-        PartiallyPausableStorage.layout().partiallyPaused[key] = true;
+        PartiallyPausableStorage
+            .layout(PartiallyPausableStorage.DEFAULT_STORAGE_SLOT)
+            .partiallyPaused[key] = true;
         emit PartiallyPaused(msg.sender, key);
     }
 
@@ -48,7 +52,9 @@ abstract contract PartiallyPausableInternal is IPartiallyPausableInternal {
     function _partiallyUnpause(
         bytes32 key
     ) internal virtual whenPartiallyPaused(key) {
-        delete PartiallyPausableStorage.layout().partiallyPaused[key];
+        delete PartiallyPausableStorage
+            .layout(PartiallyPausableStorage.DEFAULT_STORAGE_SLOT)
+            .partiallyPaused[key];
         emit PartiallyUnpaused(msg.sender, key);
     }
 }

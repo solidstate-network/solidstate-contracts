@@ -25,7 +25,9 @@ abstract contract DiamondWritableInternal is IDiamondWritableInternal {
         address target,
         bytes memory data
     ) internal virtual {
-        DiamondBaseStorage.Layout storage l = DiamondBaseStorage.layout();
+        DiamondBaseStorage.Layout storage l = DiamondBaseStorage.layout(
+            DiamondBaseStorage.DEFAULT_STORAGE_SLOT
+        );
 
         unchecked {
             uint256 originalSelectorCount = l.selectorCount;

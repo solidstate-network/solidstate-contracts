@@ -17,8 +17,9 @@ abstract contract ERC1155Metadata is IERC1155Metadata, ERC1155MetadataInternal {
      * @notice inheritdoc IERC1155Metadata
      */
     function uri(uint256 tokenId) public view virtual returns (string memory) {
-        ERC1155MetadataStorage.Layout storage l = ERC1155MetadataStorage
-            .layout();
+        ERC1155MetadataStorage.Layout storage l = ERC1155MetadataStorage.layout(
+            ERC1155MetadataStorage.DEFAULT_STORAGE_SLOT
+        );
 
         string memory tokenIdURI = l.tokenURIs[tokenId];
         string memory baseURI = l.baseURI;

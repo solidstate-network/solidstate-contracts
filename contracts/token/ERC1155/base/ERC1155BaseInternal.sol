@@ -26,7 +26,10 @@ abstract contract ERC1155BaseInternal is IERC1155BaseInternal {
     ) internal view virtual returns (uint256) {
         if (account == address(0))
             revert ERC1155Base__BalanceQueryZeroAddress();
-        return ERC1155BaseStorage.layout().balances[id][account];
+        return
+            ERC1155BaseStorage
+                .layout(ERC1155BaseStorage.DEFAULT_STORAGE_SLOT)
+                .balances[id][account];
     }
 
     /**
@@ -54,7 +57,9 @@ abstract contract ERC1155BaseInternal is IERC1155BaseInternal {
             data
         );
 
-        ERC1155BaseStorage.layout().balances[id][account] += amount;
+        ERC1155BaseStorage
+            .layout(ERC1155BaseStorage.DEFAULT_STORAGE_SLOT)
+            .balances[id][account] += amount;
 
         emit TransferSingle(msg.sender, address(0), account, id, amount);
     }
@@ -112,7 +117,9 @@ abstract contract ERC1155BaseInternal is IERC1155BaseInternal {
         );
 
         mapping(uint256 => mapping(address => uint256))
-            storage balances = ERC1155BaseStorage.layout().balances;
+            storage balances = ERC1155BaseStorage
+                .layout(ERC1155BaseStorage.DEFAULT_STORAGE_SLOT)
+                .balances;
 
         for (uint256 i; i < ids.length; ) {
             balances[ids[i]][account] += amounts[i];
@@ -172,7 +179,7 @@ abstract contract ERC1155BaseInternal is IERC1155BaseInternal {
         );
 
         mapping(address => uint256) storage balances = ERC1155BaseStorage
-            .layout()
+            .layout(ERC1155BaseStorage.DEFAULT_STORAGE_SLOT)
             .balances[id];
 
         unchecked {
@@ -202,7 +209,9 @@ abstract contract ERC1155BaseInternal is IERC1155BaseInternal {
         _beforeTokenTransfer(msg.sender, account, address(0), ids, amounts, '');
 
         mapping(uint256 => mapping(address => uint256))
-            storage balances = ERC1155BaseStorage.layout().balances;
+            storage balances = ERC1155BaseStorage
+                .layout(ERC1155BaseStorage.DEFAULT_STORAGE_SLOT)
+                .balances;
 
         unchecked {
             for (uint256 i; i < ids.length; i++) {
@@ -247,7 +256,9 @@ abstract contract ERC1155BaseInternal is IERC1155BaseInternal {
         );
 
         mapping(uint256 => mapping(address => uint256))
-            storage balances = ERC1155BaseStorage.layout().balances;
+            storage balances = ERC1155BaseStorage
+                .layout(ERC1155BaseStorage.DEFAULT_STORAGE_SLOT)
+                .balances;
 
         unchecked {
             uint256 senderBalance = balances[id][sender];
@@ -316,7 +327,9 @@ abstract contract ERC1155BaseInternal is IERC1155BaseInternal {
         _beforeTokenTransfer(operator, sender, recipient, ids, amounts, data);
 
         mapping(uint256 => mapping(address => uint256))
-            storage balances = ERC1155BaseStorage.layout().balances;
+            storage balances = ERC1155BaseStorage
+                .layout(ERC1155BaseStorage.DEFAULT_STORAGE_SLOT)
+                .balances;
 
         for (uint256 i; i < ids.length; ) {
             uint256 token = ids[i];

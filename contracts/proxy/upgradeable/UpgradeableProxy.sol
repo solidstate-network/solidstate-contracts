@@ -16,7 +16,7 @@ abstract contract UpgradeableProxy is IUpgradeableProxy, Proxy {
     function _getImplementation() internal view override returns (address) {
         // inline storage layout retrieval uses less gas
         UpgradeableProxyStorage.Layout storage l;
-        bytes32 slot = UpgradeableProxyStorage.STORAGE_SLOT;
+        bytes32 slot = UpgradeableProxyStorage.DEFAULT_STORAGE_SLOT;
         assembly {
             l.slot := slot
         }
@@ -29,6 +29,8 @@ abstract contract UpgradeableProxy is IUpgradeableProxy, Proxy {
      * @param implementation implementation address
      */
     function _setImplementation(address implementation) internal {
-        UpgradeableProxyStorage.layout().implementation = implementation;
+        UpgradeableProxyStorage
+            .layout(UpgradeableProxyStorage.DEFAULT_STORAGE_SLOT)
+            .implementation = implementation;
     }
 }

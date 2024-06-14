@@ -7,6 +7,8 @@ import { ERC165Base } from '../../../introspection/ERC165/base/ERC165Base.sol';
 
 contract ERC1155MetadataMock is ERC1155Metadata, ERC165Base {
     constructor(string memory baseURI) {
-        ERC1155MetadataStorage.layout().baseURI = baseURI;
+        ERC1155MetadataStorage
+            .layout(ERC1155MetadataStorage.DEFAULT_STORAGE_SLOT)
+            .baseURI = baseURI;
     }
 }

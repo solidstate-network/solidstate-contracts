@@ -13,7 +13,9 @@ contract ERC2981Mock is ERC2981, ERC165Base {
         uint16[] memory royaltiesBPS,
         address defaultRoyaltyReceiver
     ) {
-        ERC2981Storage.Layout storage l = ERC2981Storage.layout();
+        ERC2981Storage.Layout storage l = ERC2981Storage.layout(
+            ERC2981Storage.DEFAULT_STORAGE_SLOT
+        );
         l.defaultRoyaltyBPS = defaultRoyaltyBPS;
         l.defaultRoyaltyReceiver = defaultRoyaltyReceiver;
 
@@ -26,6 +28,8 @@ contract ERC2981Mock is ERC2981, ERC165Base {
     }
 
     function setRoyalty(uint16 defaultRoyaltyBPS) external {
-        ERC2981Storage.layout().defaultRoyaltyBPS = defaultRoyaltyBPS;
+        ERC2981Storage
+            .layout(ERC2981Storage.DEFAULT_STORAGE_SLOT)
+            .defaultRoyaltyBPS = defaultRoyaltyBPS;
     }
 }

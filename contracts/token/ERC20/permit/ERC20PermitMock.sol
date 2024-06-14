@@ -8,7 +8,9 @@ import { ERC20Permit } from './ERC20Permit.sol';
 
 contract ERC20PermitMock is ERC20Permit, ERC20Base {
     constructor(string memory tokenName) {
-        ERC20MetadataStorage.layout().name = tokenName;
+        ERC20MetadataStorage
+            .layout(ERC20MetadataStorage.DEFAULT_STORAGE_SLOT)
+            .name = tokenName;
     }
 
     /**

@@ -19,16 +19,21 @@ abstract contract ECDSAMultisigWalletInternal is IECDSAMultisigWalletInternal {
         address account,
         uint256 nonce
     ) internal view returns (bool) {
-        return ECDSAMultisigWalletStorage.layout().nonces[account][nonce];
+        return
+            ECDSAMultisigWalletStorage
+                .layout(ECDSAMultisigWalletStorage.DEFAULT_STORAGE_SLOT)
+                .nonces[account][nonce];
     }
 
     function _setInvalidNonce(address account, uint256 nonce) internal {
-        ECDSAMultisigWalletStorage.layout().nonces[account][nonce] = true;
+        ECDSAMultisigWalletStorage
+            .layout(ECDSAMultisigWalletStorage.DEFAULT_STORAGE_SLOT)
+            .nonces[account][nonce] = true;
     }
 
     function _setQuorum(uint256 quorum) internal {
         ECDSAMultisigWalletStorage.Layout storage l = ECDSAMultisigWalletStorage
-            .layout();
+            .layout(ECDSAMultisigWalletStorage.DEFAULT_STORAGE_SLOT);
 
         if (quorum > l.signers.length())
             revert ECDSAMultisigWallet__InsufficientSigners();
@@ -36,12 +41,16 @@ abstract contract ECDSAMultisigWalletInternal is IECDSAMultisigWalletInternal {
     }
 
     function _isSigner(address account) internal view returns (bool) {
-        return ECDSAMultisigWalletStorage.layout().signers.contains(account);
+        return
+            ECDSAMultisigWalletStorage
+                .layout(ECDSAMultisigWalletStorage.DEFAULT_STORAGE_SLOT)
+                .signers
+                .contains(account);
     }
 
     function _addSigner(address account) internal {
         ECDSAMultisigWalletStorage.Layout storage l = ECDSAMultisigWalletStorage
-            .layout();
+            .layout(ECDSAMultisigWalletStorage.DEFAULT_STORAGE_SLOT);
 
         if (l.signers.length() >= 256)
             revert ECDSAMultisigWallet__SignerLimitReached();
@@ -51,7 +60,7 @@ abstract contract ECDSAMultisigWalletInternal is IECDSAMultisigWalletInternal {
 
     function _removeSigner(address account) internal {
         ECDSAMultisigWalletStorage.Layout storage l = ECDSAMultisigWalletStorage
-            .layout();
+            .layout(ECDSAMultisigWalletStorage.DEFAULT_STORAGE_SLOT);
 
         if (l.quorum > l.signers.length() - 1)
             revert ECDSAMultisigWallet__InsufficientSigners();
@@ -125,7 +134,7 @@ abstract contract ECDSAMultisigWalletInternal is IECDSAMultisigWalletInternal {
         Signature[] memory signatures
     ) internal virtual {
         ECDSAMultisigWalletStorage.Layout storage l = ECDSAMultisigWalletStorage
-            .layout();
+            .layout(ECDSAMultisigWalletStorage.DEFAULT_STORAGE_SLOT);
 
         if (l.quorum > signatures.length)
             revert ECDSAMultisigWallet__QuorumNotReached();

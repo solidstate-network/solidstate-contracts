@@ -24,7 +24,7 @@ abstract contract DiamondBase is IDiamondBase, Proxy {
     {
         // inline storage layout retrieval uses less gas
         DiamondBaseStorage.Layout storage l;
-        bytes32 slot = DiamondBaseStorage.STORAGE_SLOT;
+        bytes32 slot = DiamondBaseStorage.DEFAULT_STORAGE_SLOT;
         assembly {
             l.slot := slot
         }

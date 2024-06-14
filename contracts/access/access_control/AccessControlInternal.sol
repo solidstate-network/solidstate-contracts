@@ -33,7 +33,11 @@ abstract contract AccessControlInternal is IAccessControlInternal {
         address account
     ) internal view virtual returns (bool) {
         return
-            AccessControlStorage.layout().roles[role].members.contains(account);
+            AccessControlStorage
+                .layout(AccessControlStorage.DEFAULT_STORAGE_SLOT)
+                .roles[role]
+                .members
+                .contains(account);
     }
 
     /**
@@ -72,7 +76,11 @@ abstract contract AccessControlInternal is IAccessControlInternal {
     function _getRoleAdmin(
         bytes32 role
     ) internal view virtual returns (bytes32) {
-        return AccessControlStorage.layout().roles[role].adminRole;
+        return
+            AccessControlStorage
+                .layout(AccessControlStorage.DEFAULT_STORAGE_SLOT)
+                .roles[role]
+                .adminRole;
     }
 
     /**
@@ -82,7 +90,10 @@ abstract contract AccessControlInternal is IAccessControlInternal {
      */
     function _setRoleAdmin(bytes32 role, bytes32 adminRole) internal virtual {
         bytes32 previousAdminRole = _getRoleAdmin(role);
-        AccessControlStorage.layout().roles[role].adminRole = adminRole;
+        AccessControlStorage
+            .layout(AccessControlStorage.DEFAULT_STORAGE_SLOT)
+            .roles[role]
+            .adminRole = adminRole;
         emit RoleAdminChanged(role, previousAdminRole, adminRole);
     }
 
@@ -92,7 +103,11 @@ abstract contract AccessControlInternal is IAccessControlInternal {
      * @param account recipient of role assignment
      */
     function _grantRole(bytes32 role, address account) internal virtual {
-        AccessControlStorage.layout().roles[role].members.add(account);
+        AccessControlStorage
+            .layout(AccessControlStorage.DEFAULT_STORAGE_SLOT)
+            .roles[role]
+            .members
+            .add(account);
         emit RoleGranted(role, account, msg.sender);
     }
 
@@ -102,7 +117,11 @@ abstract contract AccessControlInternal is IAccessControlInternal {
      * @parm account
      */
     function _revokeRole(bytes32 role, address account) internal virtual {
-        AccessControlStorage.layout().roles[role].members.remove(account);
+        AccessControlStorage
+            .layout(AccessControlStorage.DEFAULT_STORAGE_SLOT)
+            .roles[role]
+            .members
+            .remove(account);
         emit RoleRevoked(role, account, msg.sender);
     }
 
@@ -123,7 +142,12 @@ abstract contract AccessControlInternal is IAccessControlInternal {
         bytes32 role,
         uint256 index
     ) internal view virtual returns (address) {
-        return AccessControlStorage.layout().roles[role].members.at(index);
+        return
+            AccessControlStorage
+                .layout(AccessControlStorage.DEFAULT_STORAGE_SLOT)
+                .roles[role]
+                .members
+                .at(index);
     }
 
     /**
@@ -133,6 +157,11 @@ abstract contract AccessControlInternal is IAccessControlInternal {
     function _getRoleMemberCount(
         bytes32 role
     ) internal view virtual returns (uint256) {
-        return AccessControlStorage.layout().roles[role].members.length();
+        return
+            AccessControlStorage
+                .layout(AccessControlStorage.DEFAULT_STORAGE_SLOT)
+                .roles[role]
+                .members
+                .length();
     }
 }

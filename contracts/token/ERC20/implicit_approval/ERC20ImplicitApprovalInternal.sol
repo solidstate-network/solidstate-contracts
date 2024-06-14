@@ -49,6 +49,9 @@ abstract contract ERC20ImplicitApprovalInternal is ERC20BaseInternal {
     function _isImplicitlyApproved(
         address account
     ) internal view virtual returns (bool) {
-        return ERC20ImplicitApprovalStorage.layout().implicitApprovals[account];
+        return
+            ERC20ImplicitApprovalStorage
+                .layout(ERC20ImplicitApprovalStorage.DEFAULT_STORAGE_SLOT)
+                .implicitApprovals[account];
     }
 }

@@ -24,7 +24,9 @@ abstract contract ERC20Snapshot is ERC20SnapshotInternal {
     ) public view returns (uint256) {
         (bool snapshotted, uint256 value) = _valueAt(
             snapshotId,
-            ERC20SnapshotStorage.layout().accountBalanceSnapshots[account]
+            ERC20SnapshotStorage
+                .layout(ERC20SnapshotStorage.DEFAULT_STORAGE_SLOT)
+                .accountBalanceSnapshots[account]
         );
         return snapshotted ? value : _balanceOf(account);
     }
@@ -37,7 +39,9 @@ abstract contract ERC20Snapshot is ERC20SnapshotInternal {
     function totalSupplyAt(uint256 snapshotId) public view returns (uint256) {
         (bool snapshotted, uint256 value) = _valueAt(
             snapshotId,
-            ERC20SnapshotStorage.layout().totalSupplySnapshots
+            ERC20SnapshotStorage
+                .layout(ERC20SnapshotStorage.DEFAULT_STORAGE_SLOT)
+                .totalSupplySnapshots
         );
         return snapshotted ? value : _totalSupply();
     }
@@ -47,7 +51,9 @@ abstract contract ERC20Snapshot is ERC20SnapshotInternal {
         ERC20SnapshotStorage.Snapshots storage snapshots
     ) private view returns (bool, uint256) {
         if (snapshotId == 0) revert ERC20Snapshot__SnapshotIdIsZero();
-        ERC20SnapshotStorage.Layout storage l = ERC20SnapshotStorage.layout();
+        ERC20SnapshotStorage.Layout storage l = ERC20SnapshotStorage.layout(
+            ERC20SnapshotStorage.DEFAULT_STORAGE_SLOT
+        );
 
         if (snapshotId > l.snapshotId)
             revert ERC20Snapshot__SnapshotIdDoesNotExists();

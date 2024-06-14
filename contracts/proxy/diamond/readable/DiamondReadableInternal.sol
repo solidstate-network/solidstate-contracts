@@ -15,7 +15,9 @@ abstract contract DiamondReadableInternal is IDiamondReadableInternal {
      * @return diamondFacets array of structured facet data
      */
     function _facets() internal view returns (Facet[] memory diamondFacets) {
-        DiamondBaseStorage.Layout storage l = DiamondBaseStorage.layout();
+        DiamondBaseStorage.Layout storage l = DiamondBaseStorage.layout(
+            DiamondBaseStorage.DEFAULT_STORAGE_SLOT
+        );
 
         diamondFacets = new Facet[](l.selectorCount);
 
@@ -94,7 +96,9 @@ abstract contract DiamondReadableInternal is IDiamondReadableInternal {
     function _facetFunctionSelectors(
         address facet
     ) internal view returns (bytes4[] memory selectors) {
-        DiamondBaseStorage.Layout storage l = DiamondBaseStorage.layout();
+        DiamondBaseStorage.Layout storage l = DiamondBaseStorage.layout(
+            DiamondBaseStorage.DEFAULT_STORAGE_SLOT
+        );
 
         selectors = new bytes4[](l.selectorCount);
 
@@ -140,7 +144,9 @@ abstract contract DiamondReadableInternal is IDiamondReadableInternal {
         view
         returns (address[] memory addresses)
     {
-        DiamondBaseStorage.Layout storage l = DiamondBaseStorage.layout();
+        DiamondBaseStorage.Layout storage l = DiamondBaseStorage.layout(
+            DiamondBaseStorage.DEFAULT_STORAGE_SLOT
+        );
 
         addresses = new address[](l.selectorCount);
         uint256 numFacets;
@@ -195,6 +201,12 @@ abstract contract DiamondReadableInternal is IDiamondReadableInternal {
     function _facetAddress(
         bytes4 selector
     ) internal view returns (address facet) {
-        facet = address(bytes20(DiamondBaseStorage.layout().facets[selector]));
+        facet = address(
+            bytes20(
+                DiamondBaseStorage
+                    .layout(DiamondBaseStorage.DEFAULT_STORAGE_SLOT)
+                    .facets[selector]
+            )
+        );
     }
 }

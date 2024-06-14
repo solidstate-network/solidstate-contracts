@@ -14,7 +14,10 @@ abstract contract ERC20BaseInternal is IERC20BaseInternal {
      * @return token supply
      */
     function _totalSupply() internal view virtual returns (uint256) {
-        return ERC20BaseStorage.layout().totalSupply;
+        return
+            ERC20BaseStorage
+                .layout(ERC20BaseStorage.DEFAULT_STORAGE_SLOT)
+                .totalSupply;
     }
 
     /**
@@ -25,7 +28,10 @@ abstract contract ERC20BaseInternal is IERC20BaseInternal {
     function _balanceOf(
         address account
     ) internal view virtual returns (uint256) {
-        return ERC20BaseStorage.layout().balances[account];
+        return
+            ERC20BaseStorage
+                .layout(ERC20BaseStorage.DEFAULT_STORAGE_SLOT)
+                .balances[account];
     }
 
     /**
@@ -38,7 +44,10 @@ abstract contract ERC20BaseInternal is IERC20BaseInternal {
         address holder,
         address spender
     ) internal view virtual returns (uint256) {
-        return ERC20BaseStorage.layout().allowances[holder][spender];
+        return
+            ERC20BaseStorage
+                .layout(ERC20BaseStorage.DEFAULT_STORAGE_SLOT)
+                .allowances[holder][spender];
     }
 
     /**
@@ -56,7 +65,9 @@ abstract contract ERC20BaseInternal is IERC20BaseInternal {
         if (holder == address(0)) revert ERC20Base__ApproveFromZeroAddress();
         if (spender == address(0)) revert ERC20Base__ApproveToZeroAddress();
 
-        ERC20BaseStorage.layout().allowances[holder][spender] = amount;
+        ERC20BaseStorage
+            .layout(ERC20BaseStorage.DEFAULT_STORAGE_SLOT)
+            .allowances[holder][spender] = amount;
 
         emit Approval(holder, spender, amount);
 
@@ -93,7 +104,9 @@ abstract contract ERC20BaseInternal is IERC20BaseInternal {
 
         _beforeTokenTransfer(address(0), account, amount);
 
-        ERC20BaseStorage.Layout storage l = ERC20BaseStorage.layout();
+        ERC20BaseStorage.Layout storage l = ERC20BaseStorage.layout(
+            ERC20BaseStorage.DEFAULT_STORAGE_SLOT
+        );
         l.totalSupply += amount;
         l.balances[account] += amount;
 
@@ -110,7 +123,9 @@ abstract contract ERC20BaseInternal is IERC20BaseInternal {
 
         _beforeTokenTransfer(account, address(0), amount);
 
-        ERC20BaseStorage.Layout storage l = ERC20BaseStorage.layout();
+        ERC20BaseStorage.Layout storage l = ERC20BaseStorage.layout(
+            ERC20BaseStorage.DEFAULT_STORAGE_SLOT
+        );
         uint256 balance = l.balances[account];
         if (amount > balance) revert ERC20Base__BurnExceedsBalance();
         unchecked {
@@ -138,7 +153,9 @@ abstract contract ERC20BaseInternal is IERC20BaseInternal {
 
         _beforeTokenTransfer(holder, recipient, amount);
 
-        ERC20BaseStorage.Layout storage l = ERC20BaseStorage.layout();
+        ERC20BaseStorage.Layout storage l = ERC20BaseStorage.layout(
+            ERC20BaseStorage.DEFAULT_STORAGE_SLOT
+        );
         uint256 holderBalance = l.balances[holder];
         if (amount > holderBalance) revert ERC20Base__TransferExceedsBalance();
         unchecked {

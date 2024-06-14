@@ -14,7 +14,11 @@ abstract contract ERC721EnumerableInternal {
      * @notice TODO
      */
     function _totalSupply() internal view returns (uint256) {
-        return ERC721BaseStorage.layout().tokenOwners.length();
+        return
+            ERC721BaseStorage
+                .layout(ERC721BaseStorage.DEFAULT_STORAGE_SLOT)
+                .tokenOwners
+                .length();
     }
 
     /**
@@ -24,7 +28,11 @@ abstract contract ERC721EnumerableInternal {
         address owner,
         uint256 index
     ) internal view returns (uint256) {
-        return ERC721BaseStorage.layout().holderTokens[owner].at(index);
+        return
+            ERC721BaseStorage
+                .layout(ERC721BaseStorage.DEFAULT_STORAGE_SLOT)
+                .holderTokens[owner]
+                .at(index);
     }
 
     /**
@@ -33,6 +41,9 @@ abstract contract ERC721EnumerableInternal {
     function _tokenByIndex(
         uint256 index
     ) internal view returns (uint256 tokenId) {
-        (tokenId, ) = ERC721BaseStorage.layout().tokenOwners.at(index);
+        (tokenId, ) = ERC721BaseStorage
+            .layout(ERC721BaseStorage.DEFAULT_STORAGE_SLOT)
+            .tokenOwners
+            .at(index);
     }
 }

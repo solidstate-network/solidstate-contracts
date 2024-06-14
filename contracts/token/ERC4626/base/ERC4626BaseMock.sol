@@ -24,9 +24,13 @@ contract ERC4626BaseMock is ERC4626Base {
         string memory symbol,
         uint8 decimals
     ) {
-        ERC4626BaseStorage.layout().asset = asset;
+        ERC4626BaseStorage
+            .layout(ERC4626BaseStorage.DEFAULT_STORAGE_SLOT)
+            .asset = asset;
 
-        ERC20MetadataStorage.Layout storage l = ERC20MetadataStorage.layout();
+        ERC20MetadataStorage.Layout storage l = ERC20MetadataStorage.layout(
+            ERC20MetadataStorage.DEFAULT_STORAGE_SLOT
+        );
         l.name = name;
         l.symbol = symbol;
         l.decimals = decimals;
