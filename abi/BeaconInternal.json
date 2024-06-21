@@ -1,22 +1,12 @@
 [
   {
     "inputs": [],
-    "name": "ManagedProxy__FetchImplementationFailed",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "Ownable__NotOwner",
     "type": "error"
   },
   {
     "inputs": [],
     "name": "Ownable__NotTransitiveOwner",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "Proxy__ImplementationIsNotContract",
     "type": "error"
   },
   {
@@ -37,9 +27,5 @@
     ],
     "name": "OwnershipTransferred",
     "type": "event"
-  },
-  {
-    "stateMutability": "payable",
-    "type": "fallback"
   }
 ]
